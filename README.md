@@ -227,6 +227,17 @@ ALTER TABLE weather_data ADD CONSTRAINT unique_weather_time UNIQUE (time);
 
 ---
 
+## Dashboard
+
+To launch the live weather dashboard:
+
+```bash
+streamlit run dashboard.py
+```
+
+Opens at `http://localhost:8501` — auto refreshes every 60 seconds.
+
+---
 
 ## Author
 
