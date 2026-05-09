@@ -84,3 +84,36 @@ docker exec -it weather_postgres psql -U myuser -d weather_db -c "SELECT * FROM 
     docker-compose.yml: Defines the PostgreSQL service and persistent data volumes.
 
     requirements.txt: List of necessary Python packages.
+
+
+4. Reliability & Observability
+
+Error Handling:
+→ Extraction failure — retry 3 times with 5 second delay
+→ Invalid API response — validate before processing
+→ Transform failure — log bad data, skip row, continue
+→ Load failure — rollback transaction, log error
+→ Database unreachable — fail fast, log, exit gracefully
+
+Logging:
+→ Log to file and console simultaneously
+→ Log format: timestamp | level | module | message
+→ Log every pipeline stage start and finish
+→ Log row counts after transform and load
+→ Log execution time of full pipeline
+
+Log levels:
+INFO    → normal operations (pipeline started, 10 rows loaded)
+WARNING → something unexpected but recoverable
+ERROR   → something failed, pipeline may continue
+CRITICAL → pipeline cannot continue, exit
+
+Example log output:
+2026-05-09 10:00:00 | INFO     | extract  | Starting extraction from Open-Meteo
+2026-05-09 10:00:01 | INFO     | extract  | Successfully extracted 24 records
+2026-05-09 10:00:01 | INFO     | transform| Starting transformation
+2026-05-09 10:00:01 | WARNING  | transform| Null value found in windspeed, filling with 0
+2026-05-09 10:00:01 | INFO     | transform| Transformation complete, 24 rows ready
+2026-05-09 10:00:01 | INFO     | load     | Loading to PostgreSQL
+2026-05-09 10:00:02 | INFO     | load     | Successfully loaded 24 rows
+2026-05-09 10:00:02 | INFO     | main     | Pipeline complete in 2.3 seconds
