@@ -209,6 +209,25 @@ CREATE TABLE weather_data (
 
 ---
 
+## Data Pipeline Architecture
+
+### Staging & Upsert Logic
+To ensure data integrity and prevent duplicate records, this project implements a **Staging + Upsert** pattern:
+1. **Extraction**: Fetches live weather data from Open-Meteo API.
+2. **Staging**: Data is first loaded into a PostgreSQL `TEMP TABLE`.
+3. **Upsert**: Data is merged into the main `weather_data` table using an `ON CONFLICT` clause.
+   - The `time` column has a `UNIQUE` constraint.
+   - If a timestamp already exists, the record is skipped (`DO NOTHING`), ensuring idempotency.
+
+### Database Setup
+To enforce this logic at the database level, the following constraint must be applied:
+```sql
+ALTER TABLE weather_data ADD CONSTRAINT unique_weather_time UNIQUE (time);
+```
+
+---
+
+
 ## Author
 
 Built as a data engineering learning project — Kaunas, Lithuania.
