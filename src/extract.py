@@ -5,7 +5,7 @@ logger = get_logger(__name__)
 
 def extract_weather_data():
     logger.info('Extraction started')
-    url = "https://api.open-meteo.com/v1/forecast?latitude=54.90&longitude=23.90&current_weather=true"
+    url = "https://api.open-meteo.com/v1/forecast?latitude=54.90&longitude=23.90&current_weather=true&hourly=temperature_2m,windspeed_10m,weathercode&forecast_days=1"
 
     try:
         response = requests.get(url)

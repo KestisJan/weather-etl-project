@@ -21,14 +21,14 @@ def load_to_postgres(df):
 
         with engine.begin() as conn:
             logger.info('Creating temporary staging table')
-            conn.execute(text("CREATE TEMP TABLE temp_weather (LIKE weather_data INCLUDING ALL);"))
+            conn.execute(text("CREATE TEMP TABLE temp_weather (LIKE hourly_weather_data INCLUDING ALL);"))
 
             logger.info('Streaming data to staging table')
             df.to_sql('temp_weather', conn, if_exists='append', index=False)
 
             logger.info('Executing Upsert (Merging staging to main table)')
             upsert_query = text("""
-                INSERT INTO weather_data
+                INSERT INTO hourly_weather_data
                 SELECT * FROM temp_weather
                 ON CONFLICT (time) DO NOTHING;
             """)
