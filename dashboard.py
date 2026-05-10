@@ -45,13 +45,24 @@ col1.metric(label='Temperature', value=f"{latest['temperature']}°C", delta=f"{t
 col2.metric(label='Windspeed', value=f"{latest['windspeed']} km/h")
 col3.metric(label='Condition', value=WEATHER_CODES.get(int(latest['weathercode']), 'Unknown'))
 
+hours = df['time'].dt.hour.tolist()
+min_hour, max_hour = st.select_slider(
+    'Select hour range',
+    options=hours,
+    value=(hours[0], hours[-1])
+)
+
+df_filtered = df[(df['time'].dt.hour >= min_hour) & (df['time'].dt.hour <= max_hour)]
+
 st.subheader('Temperature over time')
-st.line_chart(df.set_index('time')['temperature'])
+st.line_chart(df_filtered.set_index('time')['temperature'])
 
 st.subheader('Windspeed over time')
-st.line_chart(df.set_index('time')['windspeed'])
+st.line_chart(df_filtered.set_index('time')['windspeed'])
 
 st.divider()
+
+
 col4, col5, col6 = st.columns(3)
 col4.metric(label='Max Temperature', value=f"{df['temperature'].max()}°C")
 col5.metric(label='Min Temperature', value=f"{df['temperature'].min()}°C")
