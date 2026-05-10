@@ -53,7 +53,6 @@ min_hour, max_hour = st.select_slider(
 )
 
 df_filtered = df[(df['time'].dt.hour >= min_hour) & (df['time'].dt.hour <= max_hour)]
-
 st.subheader('Temperature over time')
 st.line_chart(df_filtered.set_index('time')['temperature'])
 
@@ -62,11 +61,14 @@ st.line_chart(df_filtered.set_index('time')['windspeed'])
 
 st.divider()
 
-
 col4, col5, col6 = st.columns(3)
 col4.metric(label='Max Temperature', value=f"{df['temperature'].max()}°C")
 col5.metric(label='Min Temperature', value=f"{df['temperature'].min()}°C")
 col6.metric(label='Avg Windspeed', value=f"{df['windspeed'].mean():.1f} km/h")
+
+st.subheader('Weather Conditions per Hour')
+weather_chart = df_filtered.set_index('time')['weather_description']
+st.bar_chart(weather_chart)
 
 time.sleep(60)
 st.rerun()
